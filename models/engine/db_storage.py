@@ -9,7 +9,7 @@ from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
-from models.base_model import Base
+from models.base_model import BaseModel
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
@@ -47,7 +47,7 @@ class DBStorage:
         self.__engine = create_engine(config, pool_pre_ping=True)
 
         if env == 'test':
-            Base.metadata.drop_all(bind=self.__engine)
+            BaseModel.metadata.drop_all(bind=self.__engine)
 
     def all(self, cls=None):
         """ select all the objects from a class or all the classes
@@ -100,7 +100,7 @@ class DBStorage:
     def reload(self):
         """ create the session and tables for the db
         """
-        Base.metadata.create_all(self.__engine)
+        BaseModel.metadata.create_all(self.__engine)
         session_factory = sessionmaker(bind=self.__engine)
         Session = scoped_session(session_factory)
         self.__session = Session()
