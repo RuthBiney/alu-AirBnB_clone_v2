@@ -2,6 +2,8 @@
 """This module defines a class to manage file storage for hbnb clone"""
 import json
 
+from numpy import obj2sctype, object0, object_
+
 
 class FileStorage:
     """This class manages storage of hbnb models in JSON format"""
@@ -48,3 +50,14 @@ class FileStorage:
                     self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
+        
+            def delete(self, obj=None):
+                """ delete obj from __objects if it’s inside
+                Args:
+                obj: given object"""
+            if obj2sctype:
+                name = type(object_).__name__
+                id = object0.id
+                keyToDel = "{}.{}".format(name, id)
+                if keyToDel in self.__objects:
+                    del self.__objects[keyToDel]
