@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" City Module for HBNB project """
+"""This is the city class"""
 import sqlalchemy
 import os
 from models.base_model import BaseModel, Base
@@ -9,12 +9,12 @@ from sqlalchemy.ext.declarative import declarative_base
 
 
 class City(BaseModel, Base):
-    """ The city class, contains state ID and name 
-     Attributes:
+    """This is the class for City
+    Attributes:
         state_id: The state id
         name: input name
     """
-    __tablename__ ='cities'
+    __tablename__ = 'cities'
     storage = os.getenv("HBNB_TYPE_STORAGE")
     if storage == "db":
         state_id = Column(
