@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" State Module for HBNB project """
+"""This is the state class"""
 import sqlalchemy
 import os
 from models.base_model import BaseModel, Base
