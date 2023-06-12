@@ -10,14 +10,22 @@ from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
+from shlex import split
 
 
 class HBNBCommand(cmd.Cmd):
     """this class is entry point of the command interpreter
     """
     prompt = "(hbnb) "
-    all_classes = {"BaseModel", "User", "State", "City",
-                   "Amenity", "Place", "Review"}
+    all_classes = {
+        "BaseModel": BaseModel,
+        "User": User,
+        "State": State,
+        "City": City,
+        "Amenity": Amenity,
+        "Place": Place,
+        "Review": Review
+    }
 
     def emptyline(self):
         """Ignores empty spaces"""
@@ -42,28 +50,35 @@ class HBNBCommand(cmd.Cmd):
                 raise SyntaxError()
             my_list = line.split(" ")
             obj = eval("{}()".format(my_list[0]))
-
-            for i in range(1, len(my_list)):
-                data = my_list[i].split("=")
-                if data[1].isnumeric():
-                    setattr(obj, data[0], int(data[1]))
-                else:
-                    try:
-                        setattr(obj, data[0], float(data[1]))
-                    except ValueError:
-                        string = ""
-                        for ch in data[1]:
-                            if ch != '\"':
-                                string += ch
-                        cleanString = string.replace("_", " ")
-                        setattr(obj, data[0], cleanString)
-
+            # New code
+            for index in range(1, len(my_list)):
+                p_v = self.valid_param(my_list[index])
+                if p_v:
+                    obj.__dict__[p_v[0]] = p_v[1]
+            # End new code
             obj.save()
             print("{}".format(obj.id))
         except SyntaxError:
             print("** class name missing **")
         except NameError:
             print("** class doesn't exist **")
+
+    # New code
+    def valid_param(self, arg):
+        """validates parameter and returns either None or a tuple
+        """
+        if "=" not in arg:
+            return None
+        args = arg.split("=")
+        param, value = args[0], args[1]
+        try:
+            value = eval(args[1])
+        except Exception:
+            return None
+        if type(value) is str:
+            value = value.replace("_", " ")
+        return (param, value)
+    # End new code
 
     def do_show(self, line):
         """Prints the string representation of an instance
@@ -81,7 +96,7 @@ class HBNBCommand(cmd.Cmd):
                 raise NameError()
             if len(my_list) < 2:
                 raise IndexError()
-            objects = storage.all()
+            objects = storage.all(eval(my_list[0]))
             key = my_list[0] + '.' + my_list[1]
             if key in objects:
                 print(objects[key])
@@ -133,9 +148,9 @@ class HBNBCommand(cmd.Cmd):
         Exceptions:
             NameError: when there is no object taht has the name
         """
-        objects = storage.all()
-        my_list = []
+        objects, my_list = {}, []
         if not line:
+            objects = storage.all()
             for key in objects:
                 my_list.append(objects[key])
             print(my_list)
@@ -144,10 +159,9 @@ class HBNBCommand(cmd.Cmd):
             args = line.split(" ")
             if args[0] not in self.all_classes:
                 raise NameError()
-            for key in objects:
-                name = key.split('.')
-                if name[0] == args[0]:
-                    my_list.append(objects[key])
+            objects = storage.all(args[0])
+            for k, v in objects.items():
+                my_list.append(v)
             print(my_list)
         except NameError:
             print("** class doesn't exist **")
@@ -205,7 +219,7 @@ class HBNBCommand(cmd.Cmd):
             my_list = split(line, " ")
             if my_list[0] not in self.all_classes:
                 raise NameError()
-            objects = storage.all()
+            objects = storage.all(eval(my_list[0]))
             for key in objects:
                 name = key.split('.')
                 if name[0] == my_list[0]:
