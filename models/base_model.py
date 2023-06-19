@@ -15,7 +15,7 @@ class BaseModel:
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
 
     def __init__(self, *args, **kwargs):
-        """Instatntiates a new model"""
+        """Instantiates a new model"""
         if not kwargs:
             from models import storage
             self.id = str(uuid.uuid4())
@@ -66,7 +66,8 @@ class BaseModel:
                 del (dictionary[key])
 
         dictionary.update({'__class__':
-                               (str(type(self)).split('.')[-1]).split('\'')[0]})
+                               (str(type(self)).split('.')[-1]).split('\'')[
+                                   0]})
         dictionary['created_at'] = self.created_at.isoformat()
         dictionary['updated_at'] = self.updated_at.isoformat()
         return dictionary
