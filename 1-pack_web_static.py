@@ -20,4 +20,3 @@ def do_pack():
         return file_name
     except ReferenceError:
         return None
-
