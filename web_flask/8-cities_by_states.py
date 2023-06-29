@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 @app.route('/cities_by_states', strict_slashes=False)
 def cities_by_states():
-    """loads all cities of a State"""
+    """loading all the cities of a State"""
 
     return render_template('8-cities_by_states.html',
                            states=storage.all('State').values())
